@@ -176,6 +176,7 @@ nano.hooks = {
 		$('.progress div').width(dur + '%');
 		
 		if(nano.data.song.pos() >= 15 && !nano.data.songReported){
+			nano.data.songReported = true;
 			var path = 'track/log.php?id=' + nano.data.playlist.tracks[nano.data.currentNo].id;
 			req(path, function(data){
 				return;
