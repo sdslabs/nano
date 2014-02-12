@@ -148,7 +148,9 @@ nano.hooks = {
 		nano.hooks.setAlbumArt();
 		nano.hooks.setArtist();
 		nano.hooks.setTitle();
-		setInterval(function(){
+		if(typeof reportInterval !== "undefined")
+			clearInterval(reportInterval);
+		reportInterval = setInterval(function(){
 			nano.hooks.setDuration();	
 		} , 1000);
 	},
