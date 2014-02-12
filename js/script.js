@@ -43,6 +43,9 @@ nano.data = {
 	// paused == false
 	songState: false,
 
+	// has current playing song been reported
+	songReported: false,
+
 	// Holds the current playing songs variable
 	song: null 
 }
@@ -94,6 +97,7 @@ nano.muzi = {
 
 nano.player = {
 	play: function(id){
+		nano.data.songReported = false;
 		path = 'track/index.php?id=' + id;
 		req(path, function(data){
 			nano.data.current = data;
@@ -170,6 +174,13 @@ nano.hooks = {
 			dur = 100;
 		}
 		$('.progress div').width(dur + '%');
+		
+		if(nano.data.song.pos() >= 15 && !nano.data.songReported){
+			var path = 'track/log.php?id=' + nano.data.playlist.tracks[nano.data.currentNo].id;
+			req(path, function(data){
+				return;
+			});
+		}
 	},
 
 	playerSetup: function(){
