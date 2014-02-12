@@ -119,8 +119,14 @@ div.previous-button,div.next-button{
 	background-color:rgba(189,195,199,0.5);
 	text-align:center
 }
+div.previous-button img{
+	margin-right: 2px;
+}
+div.next-button img{
+	margin-left: 3px;
+}
 div.previous-button img,div.next-button img{
-	margin:7px 0 0 0;
+	margin-top:8px;
 	height:15px;
 	width:15px
 }

@@ -117,7 +117,7 @@ nano.player = {
 		if(nano.data.songState){
 			nano.data.songState = false;
 			nano.data.song.pause();
-			$('.pause-button').html('<img src="./img/play-icon-white.png" alt="">')
+			$('.pause-button').html('<img src="./img/play-icon-white.png" style="margin-left: 2px;" alt="">')
 		}
 		else if(!nano.data.songState){
 			nano.data.songState = true;
