@@ -22,7 +22,8 @@ nano.settings = {
 		return 'https://cdn.sdslabs.co.in/music_pics/' + val + '.jpg';
 	},
 	shuffle: false,
-	repeat: false
+	repeat: false,
+	volume: 1
 }
 
 nano.data = {
@@ -200,9 +201,17 @@ nano.hooks = {
 			switch(key){
 				case 38: 
 					// arrow up
+					if(nano.settings.volume <= 1){
+						nano.settings.volume = nano.settings.volume + 0.05;
+						Howler.volume(nano.settings.volume);
+					}
 					break;
 				case 40: 
 					// arrow down
+					if(nano.settings.volume >= 0){
+						nano.settings.volume = nano.settings.volume - 0.05;
+						Howler.volume(nano.settings.volume);
+					}
 					break;
 				case 37: 
 					// arrow left
