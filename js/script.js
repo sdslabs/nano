@@ -191,6 +191,33 @@ nano.hooks = {
 				$(this).removeClass('active');
 			}
 		});
+		nano.hooks.setKeyboard();
+	},
+
+	setKeyboard: function(){
+		$('body').on('keydown', function(e){
+			var key = e.keyCode;
+			switch(key){
+				case 38: 
+					// arrow up
+					break;
+				case 40: 
+					// arrow down
+					break;
+				case 37: 
+					// arrow left
+					nano.player.previous();
+					break;
+				case 39: 
+					// arrow right
+					nano.player.next();
+					break;
+				case 32: 
+					// space
+					nano.player.togglePlay();
+					break;
+			}
+		})
 	}
 }
 
