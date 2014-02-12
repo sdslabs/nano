@@ -19,7 +19,7 @@ div.container{
 div.card{
 	background:#fff;
 	width:250px;
-	height:350px;
+	height:340px;
 	box-shadow:0 2px 10px rgba(0,0,0,0.53);
 	display:inline-block
 }
@@ -31,15 +31,14 @@ div.poster{
 	background-size: cover;
 }
 div.dashboard{
-	height:180px;
-	margin:-80px 0 0 0}
+	height:160px;
+	margin:-70px 0 0 0}
 div.info{
-	height:80px;
+	height:70px;
 	background:rgba(0,0,0,0.6);
 	/* bottom:0; */
 	color:#fff;
-	text-align:center
-;
+	text-align:center;
 	position: relative;
 }
 div.title{
