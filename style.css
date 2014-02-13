@@ -99,7 +99,7 @@ div.pause-button{
 	-webkit-border-radius:50%;
 	-moz-border-radius:50%;
 	border-radius:50%;
-	background-color:rgba(189,195,199,0.5);
+	background-color:rgba(75,75,75,0.5);
 	text-align:center
 }
 div.pause-button img{
@@ -115,7 +115,7 @@ div.previous-button,div.next-button{
 	-webkit-border-radius:50%;
 	-moz-border-radius:50%;
 	border-radius:50%;
-	background-color:rgba(189,195,199,0.5);
+	background-color:rgba(75,75,75,0.5);
 	text-align:center
 }
 div.previous-button img{
