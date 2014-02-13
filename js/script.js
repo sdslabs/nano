@@ -155,6 +155,7 @@ nano.hooks = {
 		nano.hooks.setAlbumArt();
 		nano.hooks.setArtist();
 		nano.hooks.setTitle();
+		nano.hooks.setShare();
 		if(typeof reportInterval !== "undefined")
 			clearInterval(reportInterval);
 		reportInterval = setInterval(function(){
@@ -196,6 +197,14 @@ nano.hooks = {
 			req(path, function(data){
 				return;
 			});
+		}
+	},
+
+	setShare: function(){
+		if(nano.data.songState){
+			var muziRoot = 'https://sdslabs.co.in/muzi/';
+			var trackURL = muziRoot + "#/track/" + nano.data.current.id + "/" + nano.data.current.title.toLowerCase().replace(/[^a-z0-9]+/g,'-');
+			$('.share-button a').attr('href', trackURL);
 		}
 	},
 
