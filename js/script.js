@@ -171,7 +171,13 @@ nano.hooks = {
 	},
 
 	setTitle: function(){
-		$('.title').html(nano.data.current.title);
+		var title = nano.data.current.title;
+		if(title.length > 28){
+			$('.title').attr('title', title);
+			title = title.substr(0,25);
+			title = title + '...';
+		}
+		$('.title').html(title);
 	},
 
 	setDuration: function(){
