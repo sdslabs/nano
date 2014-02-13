@@ -78,8 +78,6 @@ nano.muzi = {
 	},
 
 	playPlaylist: function(){
-
-		console.log('called');
 		if(nano.settings.shuffle){
 			var next = Math.floor(Math.random() * nano.data.playlist.tracks.length);
 			if(next === nano.data.currentNo){
@@ -89,8 +87,13 @@ nano.muzi = {
 		}
 		else{
 			var next = -1;
+			nano.data.currentNo++;
 			if(nano.data.currentNo < nano.data.playlist.tracks.length){
-				next = ++nano.data.currentNo;
+				next = nano.data.currentNo;
+			}
+			else{
+				next = 0;
+				nano.data.currentNo = 0;
 			}
 		}
 		nano.player.play(nano.data.playlist.tracks[next].id, next);
