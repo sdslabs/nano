@@ -352,7 +352,26 @@ nano.hooks = {
 		window.setTimeout(function(){
 			$('div.flap-bottom').fadeOut();
 		}, 500);
-	},
+      },
+
+      seek: function(e){
+        	if(nano.data.songState){
+        		var xPosition = 0;
+        		var yPosition = 0;
+
+        		var element = e.currentTarget;
+        		while (element) {
+        			xPosition += (element.offsetLeft - element.scrollLeft + element.clientLeft);
+        			yPosition += (element.offsetTop - element.scrollTop + element.clientTop);
+        			element = element.offsetParent;
+        		}
+        		var clickPos = e.clientX - xPosition;
+        		var total = $('.progress').width();
+        		var seek = (clickPos/total)*nano.data.current.length;
+        		nano.data.song.pos(seek);
+        		nano.hooks.setDuration(); 
+        	}
+      },
 
 	playerSetup: function(){
 		$('.pause-button').click(function(){
@@ -367,6 +386,9 @@ nano.hooks = {
 		$('.shuffle-button').click(function(){
 			nano.hooks.shuffleHelper();
 		});
+		$('.progress').on('click', function(e){
+			nano.hooks.seek(e);
+		})
 		nano.hooks.setKeyboard();
 	},
 
