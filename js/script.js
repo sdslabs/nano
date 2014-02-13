@@ -78,6 +78,8 @@ nano.muzi = {
 	},
 
 	playPlaylist: function(){
+
+		console.log('called');
 		if(nano.settings.shuffle){
 			var next = Math.floor(Math.random() * nano.data.playlist.tracks.length);
 			if(next === nano.data.currentNo){
@@ -91,30 +93,32 @@ nano.muzi = {
 				next = ++nano.data.currentNo;
 			}
 		}
-		nano.player.play(nano.data.playlist.tracks[next].id);
+		nano.player.play(nano.data.playlist.tracks[next].id, next);
 	}
 }
 
 nano.player = {
-	play: function(id){
+	play: function(id, number){
 		nano.data.songReported = false;
 		path = 'track/index.php?id=' + id;
 		req(path, function(data){
-			nano.data.current = data;
-			
-			var file = nano.settings.music + data.file;
-			
-			if(nano.data.song !== null){
-				nano.data.song.unload();
+			if(nano.data.currentNo === number){
+				nano.data.current = data;
+				
+				var file = nano.settings.music + data.file;
+				
+				if(nano.data.song !== null){
+					nano.data.song.unload();
+				}
+
+				nano.data.song = new Howl({
+			  		urls: [file],
+			  		onend: nano.muzi.playPlaylist
+				}).play();
+
+				nano.data.songState = true;
+				nano.hooks.setSongDetails();
 			}
-
-			nano.data.song = new Howl({
-		  		urls: [file],
-		  		onend: nano.muzi.playPlaylist
-			}).play();
-
-			nano.data.songState = true;
-			nano.hooks.setSongDetails();
 		})
 	},
 
