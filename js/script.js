@@ -1,6 +1,8 @@
-$(document).ready(function(){
-
-});
+Array.prototype.remove = function(from, to){
+	var rest = this.slice((to || from) + 1 || this.length);
+	this.length = from < 0 ? this.length + from : from;
+	return this.push.apply(this,rest);
+};
 
 function req(path, cb){
 	path = nano.settings.muzi + path;
@@ -32,6 +34,9 @@ nano.data = {
 	
 	// stores selected playlist data
 	playlist: {},
+
+	// Stores like playlist for the sake of setting heart value
+	likePlaylist: {},
 
 	// stores data for current playing song
 	current: {},
@@ -68,6 +73,12 @@ nano.muzi = {
 					$('.container').css('display', 'inline-block');
 					$('.selector').hide()
 				})
+
+				var path = 'playlist/index.php?id='+data.likePlaylist;
+				req(path, function(data){
+					nano.data.likePlaylist = data;
+				})
+
 				nano.data.playlists = data;
 			}
 		});	
@@ -160,7 +171,13 @@ nano.hooks = {
 		nano.hooks.setAlbumArt();
 		nano.hooks.setArtist();
 		nano.hooks.setTitle();
+		nano.hooks.setLike();
 		nano.hooks.setShare();
+
+		$('.favorite-button').on('click', function(){
+			nano.hooks.pushLike();
+		});
+
 		if(typeof reportInterval !== "undefined")
 			clearInterval(reportInterval);
 		reportInterval = setInterval(function(){
@@ -210,6 +227,59 @@ nano.hooks = {
 			var muziRoot = 'https://sdslabs.co.in/muzi/';
 			var trackURL = muziRoot + "#/track/" + nano.data.current.id + "/" + nano.data.current.title.toLowerCase().replace(/[^a-z0-9]+/g,'-');
 			$('.share-button a').attr('href', trackURL);
+		}
+	},
+
+	pushLike: function(){
+		nano.data.likePostId = nano.data.playlist.tracks[nano.data.currentNo].id;
+		if($('.favorite-button').hasClass('active')){
+			var type = 'remove';
+			var path = nano.settings.muzi + 'playlist/remove.php';
+		}
+		else{	
+			var type = 'add';
+			var path = nano.settings.muzi + 'playlist/add.php';
+		}
+		$.ajax({
+			url: path,
+			type: 'POST',
+			data: {
+				id: nano.data.likePlaylist.id,
+				tracks: [nano.data.likePostId]
+			},
+			success: function(data){
+				if(data == "Playlist saved"){
+					if(type === 'add'){
+						nano.data.likePlaylist.tracks.push({id: nano.data.likePostId});
+					}
+					else if(type === 'remove'){
+						var step;
+						for(var i in nano.data.likePlaylist.tracks){
+							if(nano.data.likePlaylist.tracks[i].id == nano.data.likePostId){
+								step = i;
+								break;
+							}
+						}
+						nano.data.likePlaylist.tracks.remove(step);		
+					}
+					nano.hooks.setLike();
+				}
+			}
+		})
+	},
+
+	setLike: function(){
+		var currentId = nano.data.playlist.tracks[nano.data.currentNo].id;
+		var set = false;
+		for(var i in nano.data.likePlaylist.tracks){
+			if(nano.data.likePlaylist.tracks[i].id == currentId){
+				$('.favorite-button').addClass('active');
+				set = true;
+				break;
+			}
+		}
+		if(!set){
+			$('.favorite-button').removeClass('active');
 		}
 	},
 

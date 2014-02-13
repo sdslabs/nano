@@ -171,6 +171,11 @@ ul.icons.active{
 ul.icons li.favorite-button img{
 	margin-top:3px
 }
+ul.icons li.favorite-button.active{
+	-moz-opacity:1;
+	-khtml-opacity:1;
+	opacity:1
+}
 ul.icons li.active img{
 	-moz-opacity:1;
 	-khtml-opacity:1;
