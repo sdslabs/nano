@@ -54,17 +54,22 @@ nano.muzi = {
 	// gets all playlists
 	getPlaylists: function(){
 		req('user/info.php?userid=me', function(data){
-			var list = {};
-			for(var i in data.playlists){
-				$('.selector ul').append('<li data-pid=' + data.playlists[i].pid + '>' + data.playlists[i].name + '</li>')
+			if(data === "false"){
+				$('.selector').html('<h1>Please login first on <a href="https://sdslabs.co.in/accounts/login.php?redirect=http://sdslabs.co.in/nano">SDSLabs portal</a></h1>')
 			}
-			$('.selector ul li').click(function(){
-				var id = $(this).attr('data-pid');
-				nano.muzi.fetchPlaylist(id);
-				$('.container').css('display', 'inline-block');
-				$('.selector').hide()
-			})
-			nano.data.playlists = data;
+			else{
+				var list = {};
+				for(var i in data.playlists){
+					$('.selector ul').append('<li data-pid=' + data.playlists[i].pid + '>' + data.playlists[i].name + '</li>')
+				}
+				$('.selector ul li').click(function(){
+					var id = $(this).attr('data-pid');
+					nano.muzi.fetchPlaylist(id);
+					$('.container').css('display', 'inline-block');
+					$('.selector').hide()
+				})
+				nano.data.playlists = data;
+			}
 		});	
 	},
 
