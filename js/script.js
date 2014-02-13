@@ -105,7 +105,7 @@ nano.player = {
 			if(nano.data.currentNo === number){
 				nano.data.current = data;
 				
-				var file = nano.settings.music + data.file;
+				var file = nano.settings.music + data.file.split('/').map(function(x){return encodeURIComponent(x);}).join('/');
 				
 				if(nano.data.song !== null){
 					nano.data.song.unload();
