@@ -132,6 +132,7 @@ nano.player = {
 
 				nano.data.song = new Howl({
 			  		urls: [file],
+			  		buffer: true,
 			  		onend: nano.muzi.playPlaylist
 				}).play();
 
