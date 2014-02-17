@@ -300,10 +300,12 @@ nano.hooks = {
 		$('.shuffle-button').click(function(){
 			if(!nano.settings.shuffle){
 				nano.settings.shuffle = true;
+				nano.config.set('shuffle', true, true);
 				$(this).addClass('active');
 			}
 			else if(nano.settings.shuffle){
 				nano.settings.shuffle = false;
+				nano.config.set('shuffle', false, true);
 				$(this).removeClass('active');
 			}
 		});
@@ -316,15 +318,17 @@ nano.hooks = {
 			switch(key){
 				case 38: 
 					// arrow up
-					if(nano.settings.volume <= 1){
+					if(nano.settings.volume <= 0.95){
 						nano.settings.volume = nano.settings.volume + 0.05;
+						nano.config.set('volume', nano.settings.volume, true);
 						Howler.volume(nano.settings.volume);
 					}
 					break;
 				case 40: 
 					// arrow down
-					if(nano.settings.volume >= 0){
+					if(nano.settings.volume >= 0.05){
 						nano.settings.volume = nano.settings.volume - 0.05;
+						nano.config.set('volume', nano.settings.volume, true);
 						Howler.volume(nano.settings.volume);
 					}
 					break;
@@ -346,6 +350,19 @@ nano.hooks = {
 }
 
 nano.init = function(){
+	nano.config = Configurator({
+		shuffle: false,
+		volume: 1.00
+	},['volume', 'shuffle']);
+	nano.settings.shuffle = nano.config.get('shuffle');
+	nano.settings.volume = nano.config.get('volume');
+
+	Howler.volume(nano.settings.volume);
+
+	if(nano.settings.shuffle){
+		$('.shuffle-button').addClass('active');
+	}
+
 	nano.muzi.getPlaylists();
 	nano.hooks.playerSetup();
 }
