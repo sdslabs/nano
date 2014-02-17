@@ -123,8 +123,14 @@ nano.player = {
 	play: function(id, number){
 		nano.data.songReported = false;
 		path = 'track/index.php?id=' + id;
+
 		req(path, function(data){
 			if(nano.data.currentNo === number){
+				
+				if(typeof blinky !== "undefined"){
+					clearInterval(blinky);
+				}
+
 				nano.data.current = data;
 				
 				var file = nano.settings.music + data.file.split('/').map(function(x){return encodeURIComponent(x);}).join('/');
@@ -160,10 +166,20 @@ nano.player = {
 
 	next: function(){
 		nano.muzi.playPlaylist();
+		blinky = setInterval(function(){
+			$('.next-button img').fadeOut(500, function(){
+				$('.next-button img').fadeIn(500);
+			})
+		}, 1000);
 	},
 
 	previous: function(){
 		if(nano.data.currentNo !== 0){
+			blinky = setInterval(function(){
+				$('.previous-button img').fadeOut(500, function(){
+					$('.previous-button img').fadeIn(500);
+				})
+			}, 1000);
 			nano.data.currentNo = nano.data.currentNo - 2;
 			nano.muzi.playPlaylist();
 		}
