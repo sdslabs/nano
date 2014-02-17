@@ -100,6 +100,9 @@ nano.muzi = {
 				nano.muzi.playPlaylist();
 				return;
 			}
+			else {
+				nano.data.currentNo = next;
+			}
 		}
 		else{
 			var next = -1;
