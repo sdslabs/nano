@@ -335,7 +335,7 @@ nano.hooks = {
 				case 38: 
 					// arrow up
 					if(nano.settings.volume <= 0.95){
-						nano.settings.volume = nano.settings.volume + 0.05;
+						nano.settings.volume = Number(nano.settings.volume + 0.05).toFixed(2);
 						nano.config.set('volume', nano.settings.volume, true);
 						Howler.volume(nano.settings.volume);
 					}
@@ -343,7 +343,7 @@ nano.hooks = {
 				case 40: 
 					// arrow down
 					if(nano.settings.volume >= 0.05){
-						nano.settings.volume = nano.settings.volume - 0.05;
+						nano.settings.volume = Number(nano.settings.volume - 0.05).toFixed(2);
 						nano.config.set('volume', nano.settings.volume, true);
 						Howler.volume(nano.settings.volume);
 					}
@@ -368,7 +368,7 @@ nano.hooks = {
 nano.init = function(){
 	nano.config = Configurator({
 		shuffle: false,
-		volume: 1.00
+		volume: 1
 	},['volume', 'shuffle']);
 	nano.settings.shuffle = nano.config.get('shuffle');
 	nano.settings.volume = nano.config.get('volume');
