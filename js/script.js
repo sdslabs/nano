@@ -169,6 +169,11 @@ nano.player = {
 
 	next: function(){
 		nano.muzi.playPlaylist();
+		
+		if(typeof blinky !== "undefined"){
+			clearInterval(blinky);
+		}
+
 		blinky = setInterval(function(){
 			$('.next-button img').fadeOut(500, function(){
 				$('.next-button img').fadeIn(500);
@@ -178,6 +183,9 @@ nano.player = {
 
 	previous: function(){
 		if(nano.data.currentNo !== 0){
+			if(typeof blinky !== "undefined"){
+				clearInterval(blinky);
+			}
 			blinky = setInterval(function(){
 				$('.previous-button img').fadeOut(500, function(){
 					$('.previous-button img').fadeIn(500);
