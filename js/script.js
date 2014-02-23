@@ -402,6 +402,10 @@ nano.hooks = {
 					// key = s
 					nano.hooks.shuffleHelper();
 					break;
+				case 76: 
+					// key = l
+					nano.hooks.pushLike();
+					break;
 			}
 		})
 	}
