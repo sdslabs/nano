@@ -335,7 +335,10 @@ nano.hooks = {
 				case 38: 
 					// arrow up
 					if(nano.settings.volume <= 0.95){
-						nano.settings.volume = Number(nano.settings.volume + 0.05).toFixed(2);
+						if(Howler._muted){
+							Howler.unmute();
+						}
+						nano.settings.volume = (Number(nano.settings.volume) + 0.05).toFixed(2);
 						nano.config.set('volume', nano.settings.volume, true);
 						Howler.volume(nano.settings.volume);
 					}
@@ -343,9 +346,15 @@ nano.hooks = {
 				case 40: 
 					// arrow down
 					if(nano.settings.volume >= 0.05){
-						nano.settings.volume = Number(nano.settings.volume - 0.05).toFixed(2);
+						nano.settings.volume = (Number(nano.settings.volume) - 0.05).toFixed(2);
 						nano.config.set('volume', nano.settings.volume, true);
-						Howler.volume(nano.settings.volume);
+						if(nano.settings.volume < 0.05){
+							Howler.mute();
+							nano.settings.volume = 0;
+						}
+						else{
+							Howler.volume(nano.settings.volume);
+						}
 					}
 					break;
 				case 37: 
