@@ -60,7 +60,7 @@ nano.muzi = {
 	getPlaylists: function(){
 		req('user/info.php?userid=me', function(data){
 			if(data === "false"){
-				$('.selector').html('<h1>Please login first on <a href="https://sdslabs.co.in/accounts/login.php?redirect=http://sdslabs.co.in/nano">SDSLabs portal</a></h1>')
+				$('.selector').html('<h1>Login to<a href="https://sdslabs.co.in/accounts/login.php?redirect=http://sdslabs.co.in/nano">SDSLabs</a></h1>')
 			}
 			else{
 				var list = {};
