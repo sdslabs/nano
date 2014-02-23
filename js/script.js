@@ -348,16 +348,14 @@ nano.hooks = {
 					break;
 				case 40: 
 					// arrow down
-					if(nano.settings.volume >= 0.05){
+					if(nano.settings.volume < 0.05){
+						Howler.mute();
+						nano.settings.volume = 0;
+					}
+					else if(nano.settings.volume >= 0.05){
 						nano.settings.volume = (Number(nano.settings.volume) - 0.05).toFixed(2);
-						nano.config.set('volume', nano.settings.volume, true);
-						if(nano.settings.volume < 0.05){
-							Howler.mute();
-							nano.settings.volume = 0;
-						}
-						else{
-							Howler.volume(nano.settings.volume);
-						}
+						nano.config.set('volume', nano.settings.volume, true);					
+						Howler.volume(nano.settings.volume);
 					}
 					break;
 				case 37: 
@@ -385,7 +383,13 @@ nano.init = function(){
 	nano.settings.shuffle = nano.config.get('shuffle');
 	nano.settings.volume = nano.config.get('volume');
 
-	Howler.volume(nano.settings.volume);
+	if(nano.settings.volume < 0.05){
+		Howler.mute();
+		nano.settings.volume = 0;
+	}
+	else {
+		Howler.volume(nano.settings.volume);
+	}
 
 	if(nano.settings.shuffle){
 		$('.shuffle-button').addClass('active');
