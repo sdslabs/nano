@@ -89,6 +89,7 @@ nano.muzi = {
 		var path = 'playlist/index.php?id='+id;
 		req(path, function(data){
 			nano.data.playlist = data;
+			nano.data.playlist.originalOrder = JSON.parse(JSON.stringify(nano.data.playlist.tracks));
 			if(nano.settings.shuffle){
 				nano.player.shuffle();
 			}
@@ -305,6 +306,21 @@ nano.hooks = {
 		}
 	},
 
+	shuffleHelper: function(){
+		if(!nano.settings.shuffle){
+			nano.player.shuffle();
+			nano.settings.shuffle = true;
+			nano.config.set('shuffle', true, true);
+			$('.shuffle-button').addClass('active');
+		}
+		else if(nano.settings.shuffle){
+			nano.data.playlist.tracks = JSON.parse(JSON.stringify(nano.data.playlist.originalOrder));
+			nano.settings.shuffle = false;
+			nano.config.set('shuffle', false, true);
+			$('.shuffle-button').removeClass('active');
+		}
+	},
+
 	playerSetup: function(){
 		$('.pause-button').click(function(){
 			nano.player.togglePlay();
@@ -316,17 +332,7 @@ nano.hooks = {
 			nano.player.next();
 		});
 		$('.shuffle-button').click(function(){
-			if(!nano.settings.shuffle){
-				nano.player.shuffle();
-				nano.settings.shuffle = true;
-				nano.config.set('shuffle', true, true);
-				$(this).addClass('active');
-			}
-			else if(nano.settings.shuffle){
-				nano.settings.shuffle = false;
-				nano.config.set('shuffle', false, true);
-				$(this).removeClass('active');
-			}
+			nano.hooks.shuffleHelper();
 		});
 		nano.hooks.setKeyboard();
 	},
@@ -369,6 +375,10 @@ nano.hooks = {
 				case 32: 
 					// space
 					nano.player.togglePlay();
+					break;
+				case 83: 
+					// key = s
+					nano.hooks.shuffleHelper();
 					break;
 			}
 		})
