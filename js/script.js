@@ -133,9 +133,9 @@ nano.player = {
 				}
 
 				nano.data.song = new Howl({
-			  		urls: [file],
-			  		buffer: true,
-			  		onend: nano.muzi.playPlaylist
+					urls: [file],
+					buffer: true,
+					onend: nano.muzi.playPlaylist
 				}).play();
 
 				nano.data.songState = true;
@@ -321,6 +321,24 @@ nano.hooks = {
 		}
 	},
 
+	volumeUI: function(){
+		if(typeof nano.volumeTimeout !== "undefined"){
+			window.clearTimeout(nano.volumeTimeout);
+		}
+
+		$('div.flap-bottom').fadeIn();
+
+		nano.volumeTimeout = window.setTimeout(function(){
+			nano.hooks.volumeTimeOut();
+		}, 2000);
+	},
+
+	volumeTimeOut: function(){
+		window.setTimeout(function(){
+			$('div.flap-bottom').fadeOut();
+		}, 500);
+	},
+
 	playerSetup: function(){
 		$('.pause-button').click(function(){
 			nano.player.togglePlay();
@@ -351,10 +369,12 @@ nano.hooks = {
 						nano.config.set('volume', nano.settings.volume, true);
 						Howler.volume(nano.settings.volume);
 					}
+					$('div.flap-bottom .volume').width((nano.settings.volume * 100) + '%');
+					nano.hooks.volumeUI();
 					break;
 				case 40: 
 					// arrow down
-					if(nano.settings.volume < 0.05){
+					if(nano.settings.volume <= 0.05){
 						Howler.mute();
 						nano.settings.volume = 0;
 					}
@@ -363,6 +383,8 @@ nano.hooks = {
 						nano.config.set('volume', nano.settings.volume, true);					
 						Howler.volume(nano.settings.volume);
 					}
+					$('div.flap-bottom .volume').width((nano.settings.volume * 100) + '%');
+					nano.hooks.volumeUI();
 					break;
 				case 37: 
 					// arrow left
