@@ -174,7 +174,15 @@ nano.player = {
 	},
 
 	previous: function(){
-		if(nano.data.currentNo !== 0){
+		if(nano.settings.shuffle){
+			blinky = setInterval(function(){
+				$('.previous-button img').fadeOut(500, function(){
+					$('.previous-button img').fadeIn(500);
+				})
+			}, 1000);
+			nano.muzi.playPlaylist();
+		}
+		else if(nano.data.currentNo !== 0){
 			blinky = setInterval(function(){
 				$('.previous-button img').fadeOut(500, function(){
 					$('.previous-button img').fadeIn(500);
