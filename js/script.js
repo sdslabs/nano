@@ -89,31 +89,23 @@ nano.muzi = {
 		var path = 'playlist/index.php?id='+id;
 		req(path, function(data){
 			nano.data.playlist = data;
+			if(nano.settings.shuffle){
+				nano.player.shuffle();
+			}
 			nano.muzi.playPlaylist();
 		});
 	},
 
 	playPlaylist: function(){
-		if(nano.settings.shuffle){
-			var next = Math.floor(Math.random() * nano.data.playlist.tracks.length);
-			if(next === nano.data.currentNo){
-				nano.muzi.playPlaylist();
-				return;
-			}
-			else {
-				nano.data.currentNo = next;
-			}
+		var next = -1;
+		nano.data.currentNo++;
+		if(nano.data.currentNo < nano.data.playlist.tracks.length){
+			next = nano.data.currentNo;
 		}
 		else{
-			var next = -1;
-			nano.data.currentNo++;
-			if(nano.data.currentNo < nano.data.playlist.tracks.length){
-				next = nano.data.currentNo;
-			}
-			else{
-				next = 0;
-				nano.data.currentNo = 0;
-			}
+			next = 0;
+			nano.data.currentNo = 0;
+			nano.player.shuffle();
 		}
 		nano.player.play(nano.data.playlist.tracks[next].id, next);
 	}
@@ -151,6 +143,16 @@ nano.player = {
 		})
 	},
 
+	shuffle: function(){
+		var len = nano.data.playlist.tracks.length;
+		for(var i = len - 1; i > 0; i--){
+			var random = Math.floor(Math.random() * i);
+			var temp = nano.data.playlist.tracks[random];
+			nano.data.playlist.tracks[random] = nano.data.playlist.tracks[i];
+			nano.data.playlist.tracks[i] = temp;
+		}
+	},
+
 	togglePlay: function(){
 		if(nano.data.songState){
 			nano.data.songState = false;
@@ -174,15 +176,7 @@ nano.player = {
 	},
 
 	previous: function(){
-		if(nano.settings.shuffle){
-			blinky = setInterval(function(){
-				$('.previous-button img').fadeOut(500, function(){
-					$('.previous-button img').fadeIn(500);
-				})
-			}, 1000);
-			nano.muzi.playPlaylist();
-		}
-		else if(nano.data.currentNo !== 0){
+		if(nano.data.currentNo !== 0){
 			blinky = setInterval(function(){
 				$('.previous-button img').fadeOut(500, function(){
 					$('.previous-button img').fadeIn(500);
@@ -323,6 +317,7 @@ nano.hooks = {
 		});
 		$('.shuffle-button').click(function(){
 			if(!nano.settings.shuffle){
+				nano.player.shuffle();
 				nano.settings.shuffle = true;
 				nano.config.set('shuffle', true, true);
 				$(this).addClass('active');
