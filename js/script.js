@@ -106,7 +106,9 @@ nano.muzi = {
 		else{
 			next = 0;
 			nano.data.currentNo = 0;
-			nano.player.shuffle();
+			if(nano.settings.shuffle){
+				nano.player.shuffle();
+			}
 		}
 		nano.player.play(nano.data.playlist.tracks[next].id, next);
 	}
