@@ -371,6 +371,11 @@ nano.hooks = {
 			switch(key){
 				case 38: 
 					// arrow up
+					
+					// hacky fix for volume jump issue 
+					if(nano.settings.volume > 1){
+						nano.settings.volume = 0.95;
+					}
 					if(nano.settings.volume <= 0.95){
 						if(Howler._muted){
 							Howler.unmute();
@@ -384,6 +389,10 @@ nano.hooks = {
 					break;
 				case 40: 
 					// arrow down
+					// hacky fix for volume jump issue 
+					if(nano.settings.volume > 1){
+						nano.settings.volume = 0.95;
+					}
 					if(nano.settings.volume <= 0.05){
 						Howler.mute();
 						nano.settings.volume = 0;
