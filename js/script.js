@@ -141,6 +141,11 @@ nano.player = {
 				}).play();
 
 				nano.data.songState = true;
+				
+				// ensures play icon is shown
+				// needed for case where user clicks on next when in paused stated 
+				$('.pause-button').html('<img src="./img/pause-icon-white.png" alt="">');
+				
 				nano.hooks.setSongDetails();
 			}
 		})
@@ -160,12 +165,12 @@ nano.player = {
 		if(nano.data.songState){
 			nano.data.songState = false;
 			nano.data.song.pause();
-			$('.pause-button').html('<img src="./img/play-icon-white.png" style="margin-left: 2px;" alt="">')
+			$('.pause-button').html('<img src="./img/play-icon-white.png" style="margin-left: 2px;" alt="">');
 		}
 		else if(!nano.data.songState){
 			nano.data.songState = true;
 			nano.data.song.play();
-			$('.pause-button').html('<img src="./img/pause-icon-white.png" alt="">')
+			$('.pause-button').html('<img src="./img/pause-icon-white.png" alt="">');
 		}
 	},
 
