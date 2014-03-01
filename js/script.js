@@ -60,11 +60,11 @@ nano.muzi = {
 	getPlaylists: function(){
 		req('user/info.php?userid=me', function(data){
 			if(data === "false"){
-				$('.selector').html('<h1>Login to<a href="https://sdslabs.co.in/accounts/login.php?redirect=http://sdslabs.co.in/nano">SDSLabs</a></h1>')
+				$('.selector').html('<h1>Login to <a href="https://sdslabs.co.in/accounts/login.php?redirect=http://sdslabs.co.in/nano">SDSLabs</a></h1>')
 			}
 			else{
 				var list = {};
-				for(var i in data.playlists){
+				for(var i=0;i<data.playlists.length;i++){
 					$('.selector ul').append('<li data-pid=' + data.playlists[i].pid + '>' + data.playlists[i].name + '</li>')
 				}
 				$('.selector ul li').click(function(){
