@@ -260,6 +260,24 @@ nano.hooks = {
 		}
 	},
 
+	seek: function(e){
+		if(nano.data.songState){
+			var xPosition = 0;
+			var yPosition = 0;
+
+			var element = e.currentTarget;
+			while (element) {
+				xPosition += (element.offsetLeft - element.scrollLeft + element.clientLeft);
+				yPosition += (element.offsetTop - element.scrollTop + element.clientTop);
+				element = element.offsetParent;
+			}
+			var clickPos = e.clientX - xPosition;
+			var total = $('.progress').width();
+			var seek = (clickPos/total)*nano.data.current.length;
+			nano.data.song.pos(seek);
+		}
+	},
+
 	setShare: function(){
 		if(nano.data.songState){
 			var muziRoot = 'https://sdslabs.co.in/muzi/';
