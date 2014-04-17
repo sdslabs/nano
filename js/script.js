@@ -387,7 +387,6 @@ nano.hooks = {
         		var total = $('.progress').width();
         		var seek = (clickPos/total)*nano.data.current.length;
         		nano.data.song.pos(seek);
-        		nano.hooks.setDuration(); 
         	}
       },
 
