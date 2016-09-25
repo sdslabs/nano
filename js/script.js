@@ -4,24 +4,42 @@ Array.prototype.remove = function(from, to){
 	return this.push.apply(this,rest);
 };
 
-function req(path, cb){
+function reqGET(path, success, error) {
 	path = nano.settings.muzi + path;
 	$.ajax({
 		url: path,
 		type: 'GET',
-		success: function(data){
-			cb(data); 
-		}
+		dataType: 'JSON',
+		xhrFields: {
+			withCredentials: true
+		},
+		success: success  || function() {},
+		error: error  || function() {}
+	})
+}
+
+function reqPOST(path, data, success, error) {
+	path = nano.settings.muzi + path;
+	$.ajax({
+		url: path,
+		type: 'POST',
+		dataType: 'JSON',
+		data: data,
+		xhrFields: {
+			withCredentials: true
+		},
+		success: success || function() {},
+		error: error  || function() {}
 	})
 }
 
 nano = {};
 
 nano.settings = {
-	muzi: 'https://sdslabs.co.in/muzi/ajax/',
+	muzi: 'https://howl.sdslabs.co.in/',
 	music: 'https://music.sdslabs.co.in/',
 	albumPic: function(val){
-		return 'https://cdn.sdslabs.co.in/music_pics/' + val + '.jpg';
+		return 'https://music.sdslabs.co.in/muzi_pics/album_thumbnail/' + val + '.jpg';
 	},
 	shuffle: false,
 	repeat: false,
@@ -58,36 +76,33 @@ nano.data = {
 nano.muzi = {
 	// gets all playlists
 	getPlaylists: function(){
-		req('user/info.php?userid=me', function(data){
-			if(data === "false"){
-				$('.selector').html('<h1>Login to <a href="https://sdslabs.co.in/accounts/login.php?redirect=http://sdslabs.co.in/nano">SDSLabs</a></h1>')
+		reqGET('user/info/me', function(data){
+			var list = {};
+			for(var i=0;i<data.playlists.length;i++){
+				$('.selector ul').append('<li data-pid=' + data.playlists[i].id + '>' + data.playlists[i].name + '</li>')
 			}
-			else{
-				var list = {};
-				for(var i=0;i<data.playlists.length;i++){
-					$('.selector ul').append('<li data-pid=' + data.playlists[i].pid + '>' + data.playlists[i].name + '</li>')
-				}
-				$('.selector ul li').click(function(){
-					var id = $(this).attr('data-pid');
-					nano.muzi.fetchPlaylist(id);
-					$('.container').css('display', 'inline-block');
-					$('.selector').hide()
-				})
+			$('.selector ul li').click(function(){
+				var id = $(this).attr('data-pid');
+				nano.muzi.fetchPlaylist(id);
+				$('.container').css('display', 'inline-block');
+				$('.selector').hide()
+			})
 
-				var path = 'playlist/index.php?id='+data.likePlaylist;
-				req(path, function(data){
-					nano.data.likePlaylist = data;
-				})
+			var path = 'playlist/info/' + data.like_playlist;
+			reqGET(path, function(data){
+				nano.data.likePlaylist = data;
+			})
 
-				nano.data.playlists = data;
-			}
+			nano.data.playlists = data;
+		}, function() {
+				$('.selector').html('<h1>Login to <a href="https://accounts.sdslabs.co.in/login?redirect=http://sdslabs.co.in/nano">SDSLabs</a></h1>')
 		});	
 	},
 
 	// fetches all songs from particular playlist
 	fetchPlaylist: function(id){
-		var path = 'playlist/index.php?id='+id;
-		req(path, function(data){
+		var path = 'playlist/info/'+id;
+		reqGET(path, function(data){
 			nano.data.playlist = data;
 			nano.data.playlist.originalOrder = JSON.parse(JSON.stringify(nano.data.playlist.tracks));
 			if(nano.settings.shuffle){
@@ -117,9 +132,9 @@ nano.muzi = {
 nano.player = {
 	play: function(id, number){
 		nano.data.songReported = false;
-		path = 'track/index.php?id=' + id;
+		path = 'track/info/' + id;
 
-		req(path, function(data){
+		reqGET(path, function(data){
 			if(nano.data.currentNo === number){
 				
 				if(typeof blinky !== "undefined"){
@@ -224,7 +239,7 @@ nano.hooks = {
 	},
 
 	setAlbumArt: function(){
-		var id = nano.data.current.albumId;
+		var id = nano.data.current.album_id;
 		var path = nano.settings.albumPic(id);
 		var val = 'url(' + path + ')';
 		$('.poster').css('background-image', val);
@@ -253,10 +268,9 @@ nano.hooks = {
 		
 		if(nano.data.song.pos() >= 15 && !nano.data.songReported){
 			nano.data.songReported = true;
-			var path = 'track/log.php?id=' + nano.data.playlist.tracks[nano.data.currentNo].id;
-			req(path, function(data){
-				return;
-			});
+			var path = 'track/log';
+			var data = { id: nano.data.playlist.tracks[nano.data.currentNo].id };
+			reqPOST(path, data);
 		}
 	},
 
@@ -280,48 +294,39 @@ nano.hooks = {
 
 	setShare: function(){
 		if(nano.data.songState){
-			var muziRoot = 'https://sdslabs.co.in/muzi/';
+			var muziRoot = 'https://muzi.sdslabs.co.in/';
 			var trackURL = muziRoot + "#/track/" + nano.data.current.id + "/" + nano.data.current.title.toLowerCase().replace(/[^a-z0-9]+/g,'-');
 			$('.share-button a').attr('href', trackURL);
 		}
 	},
 
 	pushLike: function(){
-		nano.data.likePostId = nano.data.playlist.tracks[nano.data.currentNo].id;
+		nano.data.likeTrackId = nano.data.playlist.tracks[nano.data.currentNo].id;
+		var data = {
+			id: nano.data.likePlaylist.id,
+			tracks: [nano.data.likeTrackId]
+		}
 		if($('.favorite-button').hasClass('active')){
-			var type = 'remove';
-			var path = nano.settings.muzi + 'playlist/remove.php';
-		}
-		else{	
-			var type = 'add';
-			var path = nano.settings.muzi + 'playlist/add.php';
-		}
-		$.ajax({
-			url: path,
-			type: 'POST',
-			data: {
-				id: nano.data.likePlaylist.id,
-				tracks: [nano.data.likePostId]
-			},
-			success: function(data){
-				if(data == "Playlist saved"){
-					if(type === 'add'){
-						nano.data.likePlaylist.tracks.push({id: nano.data.likePostId});
+			var path = nano.settings.muzi + 'playlist/remove';
+			reqPOST(path, data, function(data) {
+				var step;
+				for(var i in nano.data.likePlaylist.tracks){
+					if(nano.data.likePlaylist.tracks[i].id == nano.data.likeTrackId){
+						step = i;
+						break;
 					}
-					else if(type === 'remove'){
-						var step;
-						for(var i in nano.data.likePlaylist.tracks){
-							if(nano.data.likePlaylist.tracks[i].id == nano.data.likePostId){
-								step = i;
-								break;
-							}
-						}
-						nano.data.likePlaylist.tracks.remove(step);		
-					}
-					nano.hooks.setLike();
 				}
-			}
-		})
+				nano.data.likePlaylist.tracks.remove(step);
+				nano.hooks.setLike();
+			});
+
+		} else {	
+			var path = nano.settings.muzi + 'playlist/add';
+			reqPOST(path, data, function(data) {
+				nano.data.likePlaylist.tracks.push({id: nano.data.likeTrackId});
+				nano.hooks.setLike();
+			});
+		}
 	},
 
 	setLike: function(){
